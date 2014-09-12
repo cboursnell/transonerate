@@ -31,7 +31,7 @@ that will output a sort of blast6-like format. Eg:
 
 Then we can find the length of alignment by doing (qe-qs/qlen) and multiply it
 by the %seqid. Then look up this region in the gtf. Sum the length of all exons
-that are wholy or partially covered by the `target_s` and `target_e` exonerate
+that are wholly or partially covered by the `target_s` and `target_e` exonerate
 hit. Find the percentage coverage to the transcript. So the score has to take
 into account the %seqid, the percentage of the contig that aligned to the
 genome, and the percentage of the aligned contig that aligned to a transcript

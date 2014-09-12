@@ -1,0 +1,86 @@
+tophat2:
+  binaries:
+    - tophat
+    - tophat2
+    - gtf_juncs
+    - prep_reads
+    - gtf_to_fasta
+    - bam2fastx
+    - fix_map_ordering
+    - map2gtf
+    - segment_juncs
+    - juncs_db
+    - long_spanning_reads
+    - tophat_reports
+    - bam_merge
+  version:
+    number: '2.0.12'
+    command: 'tophat2 --version'
+  url:
+    64bit:
+      linux: http://ccb.jhu.edu/software/tophat/downloads/tophat-2.0.12.Linux_x86_64.tar.gz
+      macosx: http://ccb.jhu.edu/software/tophat/downloads/tophat-2.0.12.OSX_x86_64.tar.gz
+bowtie2:
+  binaries:
+    - bowtie2
+    - bowtie2-align-l
+    - bowtie2-align-s
+    - bowtie2-build
+    - bowtie2-build-l
+    - bowtie2-build-s
+    - bowtie2-inspect
+    - bowtie2-inspect-l
+    - bowtie2-inspect-s
+  version:
+    number: '2.2.3'
+    command: 'bowtie2 --version'
+  url:
+    64bit:
+      linux: http://downloads.sourceforge.net/project/bowtie-bio/bowtie2/2.2.3/bowtie2-2.2.3-linux-x86_64.zip
+      macosx: http://downloads.sourceforge.net/project/bowtie-bio/bowtie2/2.2.3/bowtie2-2.2.3-macos-x86_64.zip
+cufflinks:
+  binaries:
+    - cufflinks
+  version:
+    number: '2.2.1'
+    command: 'cufflinks'
+  url:
+    64bit:
+      linux: http://cufflinks.cbcb.umd.edu/downloads/cufflinks-2.2.1.Linux_x86_64.tar.gz
+      macosx: http://cufflinks.cbcb.umd.edu/downloads/cufflinks-2.2.1.OSX_x86_64.tar.gz
+exonerate:
+  binaries:
+   - esd2esi
+   - exonerate
+   - exonerate-server
+   - fasta2esd
+   - fastaannotatecdna
+   - fastachecksum
+   - fastaclean
+   - fastaclip
+   - fastacomposition
+   - fastadiff
+   - fastaexplode
+   - fastafetch
+   - fastahardmask
+   - fastaindex
+   - fastalength
+   - fastanrdb
+   - fastaoverlap
+   - fastareformat
+   - fastaremove
+   - fastarevcomp
+   - fastasoftmask
+   - fastasort
+   - fastasplit
+   - fastasubseq
+   - fastatranslate
+   - fastavalidcds
+   - ipcress
+  version:
+    number: '2.2.0'
+    command: 'exonerate'
+  url:
+    64bit:
+      linux: https://www.ebi.ac.uk/~guy/exonerate/exonerate-2.2.0-x86_64.tar.gz
+      macosx: https://www.ebi.ac.uk/~guy/exonerate/exonerate-2.2.0-x86_64.tar.gz

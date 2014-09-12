@@ -1,4 +1,36 @@
 #!/usr/bin/env ruby
 
 require 'trollop'
+require 'bindeps'
 
+opts = Trollop::options do
+  version Transonerate::VERSION::STRING.dup
+
+  banner <<-EOS
+Transonerate v#{Transonerate::VERSION::STRING.dup} by Chris Boursnell <cmb211@cam.ac.uk>
+
+Options:
+  EOS
+
+  opt :install_deps, "install any missing dependencies"
+
+end
+
+gem_dir = Gem.loaded_specs['transonerate'].full_gem_path
+gem_deps = File.join(gem_dir, 'deps', 'deps.yaml')
+if opts.install_deps
+  puts "Checking dependencies"
+  Bindeps.require gem_deps
+  puts "All dependencies installed"
+  exit
+else
+  missing = Bindeps.missing gem_deps
+  if missing.length > 0
+    puts "Dependencies are missing:"
+    missing.each do |dep|
+      puts "  - #{dep}"
+    end
+    puts "To install all missing dependencies, run `transonerate --install-deps`"
+    exit(1)
+  end
+end

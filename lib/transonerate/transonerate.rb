@@ -10,13 +10,13 @@ module Transonerate
       @annotation = Gtf.new @gtf
     end
 
-    def score
-      @exonerate.run
+    def score threads
+      @exonerate.run threads
       @exonerate.parse_output
       @exonerate.hits.each do |query_name, hit|
         # puts "query = #{query_name}, hit.score = #{hit.score}"
         score = @annotation.search hit
-        puts "#{query_name}\t#{score} x #{hit.pi} = #{score*hit.pi}"
+        puts "#{query_name}\t#{score}\t#{hit.pi}\t#{score*hit.pi}"
       end
     end
 

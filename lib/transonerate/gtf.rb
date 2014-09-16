@@ -25,11 +25,15 @@ module Transonerate
         strand = cols[6]
         desc = cols[8]
 
-        if type == "mRNA"
+        if type == "mRNA" or type == "transcript"
           if desc =~ /Name=(.*?);/
+            mrna = $1
+          elsif desc =~/transcript_id\ \"(.*?)\";/
             mrna = $1
           else
             puts "Problem parsing name from desc line of gtf"
+            puts "#{desc}"
+            abort "errrrr"
             mrna = "unknown"
           end
           @data[mrna] ||= Feature.new(mrna, type, chromosome,
@@ -49,19 +53,29 @@ module Transonerate
       # target is the chromosome in the genome
       # start and stop of the hit are genome coordinates
 
+      puts "search: #{hit.query} "
+      puts "  hit: #{hit.tstart}..#{hit.tstop} target: #{hit.target}"
       candidates = []
       @data.each do |mrna, gtf|
         if gtf.chromosome == hit.target
           if hit.tstart >= gtf.start and hit.tstop <= gtf.stop
+            candidates << gtf
+          elsif hit.tstart >= gtf.start and hit.tstart <= gtf.stop
+            candidates << gtf
+          elsif hit.tstop >= gtf.start and hit.tstop <= gtf.stop
+            candidates << gtf
+          elsif hit.tstart <= gtf.start and hit.tstop >= gtf.stop
             candidates << gtf
           end
         end
       end
       best = 0.0
       if candidates.length > 0
+        puts "info: #{candidates.length} hits found in gtf file"
         best_candidate = candidates.first
         #puts "! #{hit.tstart}..#{hit.tstop} #{gtf.start}..#{gtf.stop}"
         candidates.each do |gtf|
+          puts "  gtf: #{gtf.chromosome} #{gtf.start}..#{gtf.stop}"
           exon_lengths = 0
           coverage = 0
           gtf.regions.each do |region|

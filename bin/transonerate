@@ -2,6 +2,7 @@
 
 require 'trollop'
 require 'bindeps'
+require 'transonerate'
 
 opts = Trollop::options do
   version Transonerate::VERSION::STRING.dup
@@ -12,6 +13,14 @@ Transonerate v#{Transonerate::VERSION::STRING.dup} by Chris Boursnell <cmb211@ca
 Options:
   EOS
 
+  opt :assembly, "Assembly fasta file", :type => String, :required => true
+  opt :genome, "Genome fasta file", :type => String, :required => true
+  opt :gtf, "Annotation file as gtf", :type => String, :required => true
+  opt :left, "First pair of fastq reads", :type => String
+  opt :right, "Second pair of fastq reads", :type => String
+  opt :threads, "Number of threads to use for tophat alignment",
+      :type => :int, :default => 1
+  opt :verbose, "Be verbose"
   opt :install_deps, "install any missing dependencies"
 
 end
@@ -34,3 +43,41 @@ else
     exit(1)
   end
 end
+
+if !File.exist?(opts.assembly)
+  Trollop::die "Cannot find #{opts.assembly}"
+end
+
+if !File.exist?(opts.genome)
+  Trollop::die "Cannot find #{opts.genome}"
+end
+
+if !File.exist?(opts.gtf)
+  Trollop::die "Cannot find #{opts.gtf}"
+end
+gtf = opts.gtf
+
+if opts.left and !File.exist?(opts.left)
+  Trollop::die "Cannot find #{opts.left}"
+end
+
+if opts.right and !File.exist?(opts.right)
+  Trollop::die "Cannot find #{opts.right}"
+end
+
+if opts.left and opts.right
+  # generate new gtf file using existing gtf and aligning reads
+  tophat = Transonerate::Tophat.new(opts.genome, opts.gtf, "tophat")
+  puts "Creating bowtie index of genome" if opts.verbose
+  tophat.create_index
+  puts "Aligning reads" if opts.verbose
+  tophat.align_reads opts.left, opts.right, opts.threads
+  puts "Creating new annotation from alignment" if opts.verbose
+  gtf = tophat.create_new_gtf opts.threads
+end
+
+transonerate = Transonerate::Transonerate.new(opts.assembly,
+                                              opts.genome,
+                                              gtf)
+puts "Running exonerate" if opts.verbose
+transonerate.score opts.threads

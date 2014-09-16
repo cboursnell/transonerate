@@ -36,3 +36,4 @@ hit. Find the percentage coverage to the transcript. So the score has to take
 into account the %seqid, the percentage of the contig that aligned to the
 genome, and the percentage of the aligned contig that aligned to a transcript
 in the gtf.
+

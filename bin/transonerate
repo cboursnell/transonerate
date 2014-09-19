@@ -20,6 +20,7 @@ Options:
   opt :right, "Second pair of fastq reads", :type => String
   opt :threads, "Number of threads to use for tophat alignment",
       :type => :int, :default => 1
+  opt :output, "File to write output to", :type => String, :required => true
   opt :verbose, "Be verbose"
   opt :install_deps, "install any missing dependencies"
 
@@ -68,16 +69,22 @@ end
 if opts.left and opts.right
   # generate new gtf file using existing gtf and aligning reads
   tophat = Transonerate::Tophat.new(opts.genome, opts.gtf, "tophat")
-  puts "Creating bowtie index of genome" if opts.verbose
+  puts "#{Time.now.strftime "%H:%M:%S"} - Creating bowtie index of genome" if opts.verbose
   tophat.create_index
-  puts "Aligning reads" if opts.verbose
+  puts "#{Time.now.strftime "%H:%M:%S"} - Aligning reads" if opts.verbose
   tophat.align_reads opts.left, opts.right, opts.threads
-  puts "Creating new annotation from alignment" if opts.verbose
+  puts "#{Time.now.strftime "%H:%M:%S"} - Creating new annotation from alignment" if opts.verbose
   gtf = tophat.create_new_gtf opts.threads
 end
 
 transonerate = Transonerate::Transonerate.new(opts.assembly,
                                               opts.genome,
                                               gtf)
-puts "Running exonerate" if opts.verbose
-transonerate.score opts.threads
+puts "#{Time.now.strftime "%H:%M:%S"} - Running exonerate" if opts.verbose
+results = transonerate.score opts.threads
+puts "#{Time.now.strftime "%H:%M:%S"} - Outputting scores" if opts.verbose
+File.open(opts.output, "wb") do |out|
+  results.each do |query, scores|
+    out.write "#{query}\t#{scores[0]}\t#{scores[1]}\t#{scores[2]}\t#{scores[0]*scores[1]*scores[2]}\n"
+  end
+end

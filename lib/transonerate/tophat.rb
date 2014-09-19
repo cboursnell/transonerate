@@ -42,7 +42,6 @@ module Transonerate
       @index = File.join(@output_dir,
                          File.basename(@genome,File.extname(@genome)))
       if !File.exist?("#{@index}.1.bt2")
-        abort "i thought it was already made #{@index}"
         build = "#{@build_path} #{@genome} #{@index}"
         stdout, stderr, status = Open3.capture3 build
         if !status.success?

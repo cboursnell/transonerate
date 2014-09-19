@@ -36,7 +36,8 @@ module Transonerate
           cmd << " --showvulgar false"
           cmd << " --query #{thread} "
           cmd << " --target #{@genome} "
-          cmd << " --bestn 10 "
+          cmd << " --bestn 1 "
+          cmd << " --maxintron 20000 "
           cmd << " > #{thread}.exonerate"
           outputs << "#{thread}.exonerate"
           stdout, stderr, status = Open3.capture3 cmd
@@ -74,8 +75,8 @@ module Transonerate
           target = cols[2]
           pi = cols[3].to_f/100.0
           qstart = cols[4].to_i+1 # exonerate uses between coordinates
-          qstop = cols[5].to_i
-          tstart = cols[6].to_i+1 # exonerate uses between coordinates
+          qstop = cols[5].to_i    #  A C G T A C G T
+          tstart = cols[6].to_i+1 #   0 1 2 3 4 5 6
           tstop = cols[7].to_i
           qlen = cols[8].to_i
           score = cols[9].to_i

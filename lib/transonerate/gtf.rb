@@ -53,8 +53,8 @@ module Transonerate
       # target is the chromosome in the genome
       # start and stop of the hit are genome coordinates
 
-      puts "search: #{hit.query} "
-      puts "  hit: #{hit.tstart}..#{hit.tstop} target: #{hit.target}"
+      # puts "search: #{hit.query} "
+      # puts "  hit: #{hit.tstart}..#{hit.tstop} target: #{hit.target}"
       candidates = []
       @data.each do |mrna, gtf|
         if gtf.chromosome == hit.target
@@ -71,14 +71,17 @@ module Transonerate
       end
       best = 0.0
       if candidates.length > 0
-        puts "info: #{candidates.length} hits found in gtf file"
+        # puts "info: #{candidates.length} hits found in gtf file"
         best_candidate = candidates.first
-        #puts "! #{hit.tstart}..#{hit.tstop} #{gtf.start}..#{gtf.stop}"
+        # puts "! #{hit.tstart}..#{hit.tstop} #{gtf.start}..#{gtf.stop}"
         candidates.each do |gtf|
-          puts "  gtf: #{gtf.chromosome} #{gtf.start}..#{gtf.stop}"
+          # puts "  gtf: #{gtf.chromosome} #{gtf.start}..#{gtf.stop}"
+          # puts "  hit: #{hit.query} #{hit.tstart}..#{hit.tstop}"
           exon_lengths = 0
           coverage = 0
+          # puts "    regions: #{gtf.regions.length}"
           gtf.regions.each do |region|
+            # puts "      region: #{region.first}..#{region.last}" #if hit.query =~ /64185/
             exon_lengths += region.last - region.first + 1
             if region.first >= hit.tstart
               if region.last <= hit.tstop
@@ -113,6 +116,7 @@ module Transonerate
               end
             end
           end
+          # puts "  total coverage : #{coverage} / #{exon_lengths} = #{coverage/exon_lengths.to_f}"
           total_coverage = coverage/exon_lengths.to_f
           if total_coverage > best
             best = total_coverage
@@ -121,7 +125,7 @@ module Transonerate
         end
         # puts "best: #{best_candidate.start}..#{best_candidate.stop}"
       else
-        puts "warning: no hits found in gtf file"
+        # puts "warning: no hits found in gtf file #{hit.query}"
       end
       return best
     end

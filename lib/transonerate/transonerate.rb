@@ -13,11 +13,14 @@ module Transonerate
     def score threads
       @exonerate.run threads
       @exonerate.parse_output
+      results = {}
       @exonerate.hits.each do |query_name, hit|
-        # puts "query = #{query_name}, hit.score = #{hit.score}"
-        score = @annotation.search hit
-        puts "#{query_name}\t#{score}\t#{hit.pi}\t#{score*hit.pi}"
+        coverage = @annotation.search hit
+        pq = (hit.qstop-hit.qstart)/hit.qlen.to_f
+        # puts "#{query_name}\t#{pq}\t#{coverage}\t#{hit.pi}\t#{coverage*hit.pi}"
+        results[query_name]=[pq, coverage, hit.pi]
       end
+      results
     end
 
   end

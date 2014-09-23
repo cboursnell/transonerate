@@ -64,13 +64,17 @@ end
 
 if opts.left
   opts.left.split(",").each do |read|
-    Trollop::die "Cannot find #{read}"
+    if !File.exist?(read)
+      Trollop::die "Cannot find #{read}"
+    end
   end
 end
 
 if opts.right
   opts.right.split(",").each do |read|
-    Trollop::die "Cannot find #{read}"
+    if !File.exist?(read)
+      Trollop::die "Cannot find #{read}"
+    end
   end
 end
 

@@ -62,12 +62,16 @@ if !opts.output
   Trollop::die "Must specify --output option"
 end
 
-if opts.left and !File.exist?(opts.left)
-  Trollop::die "Cannot find #{opts.left}"
+if opts.left
+  opts.left.split(",").each do |read|
+    Trollop::die "Cannot find #{read}"
+  end
 end
 
-if opts.right and !File.exist?(opts.right)
-  Trollop::die "Cannot find #{opts.right}"
+if opts.right
+  opts.right.split(",").each do |read|
+    Trollop::die "Cannot find #{read}"
+  end
 end
 
 if opts.left and opts.right

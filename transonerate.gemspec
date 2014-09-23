@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.authors       = [ "Richard Smith-Unna", "Chris Boursnell" ]
   gem.email         = "rds45@cam.ac.uk"
   gem.licenses      = ["MIT"]
-  gem.homepage      = 'https://github.com/Blahah/transonerate'
+  gem.homepage      = 'https://github.com/cboursnell/transonerate'
   gem.summary       = "Assessment of assembly quality by aligning to a genome"
   gem.description   = "Assessment of assembly quality by aligning to a genome with exonerate"
   gem.version       = Transonerate::VERSION::STRING.dup

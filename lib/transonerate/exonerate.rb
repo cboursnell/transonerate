@@ -30,16 +30,23 @@ module Transonerate
         files = split_input(@assembly, threads)
         threads = [threads, files.length].min
         files.threach(threads) do |thread|
-          cmd = 'exonerate --model est2genome'
+          exonerate_output = "#{File.join(output_dir, File.basename(thread))}"
+          exonerate_output << ".exonerate"
+          cmd = "exonerate --model est2genome"
+          cmd << " --query #{thread}"
+          cmd << " --target #{@genome}"
           cmd << ' --ryo "@\t%qi\t%ti\t%pi\t%qab\t%qae\t%tab\t%tae\t%ql\t%s\n"'
-          cmd << " --showalignment false "
+          cmd << " --showalignment false"
           cmd << " --showvulgar false"
-          cmd << " --query #{thread} "
-          cmd << " --target #{@genome} "
-          cmd << " --bestn 1 "
-          cmd << " --maxintron 20000 "
-          cmd << " > #{thread}.exonerate"
-          outputs << "#{thread}.exonerate"
+          cmd << " --percent 90"    # speed up options
+          cmd << " --seedrepeat 20"
+          cmd << " --dnahspthreshold 140"
+          cmd << " --bestn 1"
+          cmd << " --geneseed 250"
+          cmd << " --fsmmemory 2048"
+          cmd << " --maxintron 20000"
+          cmd << " > #{exonerate_output}"
+          outputs << exonerate_output
           stdout, stderr, status = Open3.capture3 cmd
           if !status.success?
             abort "Something went wrong with exonerate : #{thread}"

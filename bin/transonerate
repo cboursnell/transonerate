@@ -13,7 +13,7 @@ Transonerate v#{Transonerate::VERSION::STRING.dup} by Chris Boursnell <cmb211@ca
 Options:
   EOS
 
-  opt :assembly, "Assembly fasta file", :type => String
+  opt :assembly, "Assembly fasta file (can be comma separated list)", :type => String
   opt :genome, "Genome fasta file", :type => String
   opt :gtf, "Annotation file as gtf", :type => String
   opt :left, "First pair of fastq reads", :type => String
@@ -45,8 +45,10 @@ else
   end
 end
 
-if !File.exist?(opts.assembly)
-  Trollop::die "Cannot find #{opts.assembly}"
+opts.assembly.split(",").each do |a|
+  if !File.exist?(a)
+    Trollop::die "Cannot find #{a}"
+  end
 end
 
 if !File.exist?(opts.genome)
@@ -80,7 +82,7 @@ end
 
 if opts.left and opts.right
   # generate new gtf file using existing gtf and aligning reads
-  tophat = Transonerate::Tophat.new(opts.genome, opts.gtf, "tophat")
+  tophat = Transonerate::Tophat.new(opts.genome, opts.gtf, ".")
   puts "#{Time.now.strftime "%H:%M:%S"} - Creating bowtie index of genome" if opts.verbose
   tophat.create_index
   puts "#{Time.now.strftime "%H:%M:%S"} - Aligning reads" if opts.verbose
@@ -89,14 +91,15 @@ if opts.left and opts.right
   gtf = tophat.create_new_gtf opts.threads
 end
 
-transonerate = Transonerate::Transonerate.new(opts.assembly,
-                                              opts.genome,
-                                              gtf)
-puts "#{Time.now.strftime "%H:%M:%S"} - Running exonerate" if opts.verbose
-results = transonerate.score opts.threads
-puts "#{Time.now.strftime "%H:%M:%S"} - Outputting scores" if opts.verbose
-File.open(opts.output, "wb") do |out|
-  results.each do |query, scores|
-    out.write "#{query}\t#{scores[0]}\t#{scores[1]}\t#{scores[2]}\t#{scores[0]*scores[1]*scores[2]}\n"
+opts.assembly.split(",").each do |assembly|
+
+  transonerate = Transonerate::Transonerate.new(assembly, opts.genome, gtf)
+  puts "#{Time.now.strftime "%H:%M:%S"} - Running exonerate on #{File.basename(assembly)}" if opts.verbose
+  results = transonerate.score opts.threads
+  puts "#{Time.now.strftime "%H:%M:%S"} - Outputting scores" if opts.verbose
+  File.open("#{File.basename(assembly)}-#{opts.output}", "wb") do |out|
+    results.each do |query, scores|
+      out.write "#{query}\t#{scores[0]}\t#{scores[1]}\t#{scores[2]}\t#{scores[0]*scores[1]*scores[2]}\n"
+    end
   end
 end

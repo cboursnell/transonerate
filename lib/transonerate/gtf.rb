@@ -34,7 +34,7 @@ module Transonerate
             puts "Problem parsing name from desc line of gtf"
             puts "#{desc}"
             abort "errrrr"
-            mrna = "unknown"
+            # mrna = "unknown"
           end
           @data[mrna] ||= Feature.new(mrna, type, chromosome,
                                       start, stop, strand)

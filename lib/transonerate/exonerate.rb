@@ -60,8 +60,10 @@ module Transonerate
         if !status.success?
           abort "Problem concatenating individual exonerate output files"
         end
-        files.each do |file|
-          File.delete(file) if File.exist?(file)
+        if files.length > 1
+          files.each do |file|
+            File.delete(file) if File.exist?(file)
+          end
         end
         outputs.each do |o|
           File.delete(o) if File.exist?(o)
@@ -111,39 +113,43 @@ module Transonerate
       name = nil
       seq=""
       sequences=0
-      File.open(filename).each_line do |line|
-        if line =~ /^>(.*)$/
-          sequences+=1
-          if name
-            input[name]=seq
-            seq=""
-          end
-          name = $1
-        else
-          seq << line.chomp
-        end
-      end
-      input[name]=seq
-      # construct list of output file handles
-      outputs=[]
       output_files=[]
-      pieces = [pieces, sequences].min
-      pieces.times do |n|
-        outfile = "#{filename}_chunk_#{n}.fasta"
-        outfile = File.expand_path(outfile)
-        outputs[n] = File.open("#{outfile}", "w")
-        output_files[n] = "#{outfile}"
-      end
-      # write sequences
-      count=0
-      input.each_pair do |name, seq|
-        outputs[count].write(">#{name}\n")
-        outputs[count].write("#{seq}\n")
-        count += 1
-        count %= pieces
-      end
-      outputs.each do |out|
-        out.close
+      if pieces > 1
+        File.open(filename).each_line do |line|
+          if line =~ /^>(.*)$/
+            sequences+=1
+            if name
+              input[name]=seq
+              seq=""
+            end
+            name = $1
+          else
+            seq << line.chomp
+          end
+        end
+        input[name]=seq
+        # construct list of output file handles
+        outputs=[]
+        pieces = [pieces, sequences].min
+        pieces.times do |n|
+          outfile = "#{filename}_chunk_#{n}.fasta"
+          outfile = File.expand_path(outfile)
+          outputs[n] = File.open("#{outfile}", "w")
+          output_files[n] = "#{outfile}"
+        end
+        # write sequences
+        count=0
+        input.each_pair do |name, seq|
+          outputs[count].write(">#{name}\n")
+          outputs[count].write("#{seq}\n")
+          count += 1
+          count %= pieces
+        end
+        outputs.each do |out|
+          out.close
+        end
+      else
+        output_files << filename
       end
       output_files
     end

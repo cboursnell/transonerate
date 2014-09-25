@@ -24,7 +24,7 @@ module Transonerate
     # TODO split query up to @threads pieces
     def run threads=1, output_dir="."
       # align assembly to genome (this might take a while)
-      @output = "#{output_dir}/exonerate.out"
+      @output = "#{output_dir}/#{File.basename(@assembly)}.exonerate"
       if !File.exist?(@output)
         outputs=[]
         files = split_input(@assembly, threads)

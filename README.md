@@ -1,5 +1,6 @@
 Transonerate
 ============
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cboursnell/transonerate?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A Ruby gem to generate a per contig score using exonerate and a genome
 
